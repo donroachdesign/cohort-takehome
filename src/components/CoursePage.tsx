@@ -1,8 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { LayoutDashboard, BookOpen, Users, Wallet, Settings, GraduationCap } from 'lucide-react';
 import { AppShell } from '@astryxdesign/core/AppShell';
 import { TopNav, TopNavHeading } from '@astryxdesign/core/TopNav';
+import { SideNav, SideNavItem, SideNavSection } from '@astryxdesign/core/SideNav';
+import { NavIcon } from '@astryxdesign/core/NavIcon';
+import { Icon } from '@astryxdesign/core/Icon';
 import { Avatar } from '@astryxdesign/core/Avatar';
 import { HStack } from '@astryxdesign/core/Stack';
 import { DevStateSwitcher } from './DevStateSwitcher';
@@ -21,7 +25,13 @@ export function CoursePage() {
       contentPadding={0}
       topNav={
         <TopNav
-          heading={<TopNavHeading heading="Cohort" superheading="for Instructors" />}
+          heading={
+            <TopNavHeading
+              logo={<NavIcon icon={<Icon icon={GraduationCap} size="sm" color="accent" />} />}
+              heading="Cohort"
+              superheading="for Instructors"
+            />
+          }
           endContent={
             <HStack gap={3} vAlign="center">
               <Avatar name={course.instructor} size="sm" tooltip={course.instructor} />
@@ -29,6 +39,28 @@ export function CoursePage() {
             </HStack>
           }
         />
+      }
+      sideNav={
+        <SideNav>
+          <SideNavSection title="Overview">
+            <SideNavItem label="Dashboard" icon={LayoutDashboard} href="#" />
+          </SideNavSection>
+
+          <SideNavSection title="Courses">
+            <SideNavItem label="Personal Finance Basics" icon={BookOpen} href="#" />
+            <SideNavItem label={course.title} icon={BookOpen} isSelected href="#" />
+            <SideNavItem label="Options Trading 201" icon={BookOpen} href="#" />
+          </SideNavSection>
+
+          <SideNavSection title="Business">
+            <SideNavItem label="Students" icon={Users} href="#" />
+            <SideNavItem label="Payouts" icon={Wallet} href="#" />
+          </SideNavSection>
+
+          <SideNavSection title="Account">
+            <SideNavItem label="Settings" icon={Settings} href="#" />
+          </SideNavSection>
+        </SideNav>
       }
     >
       {state === 'draft' && <DraftView onInviteBeta={() => setState('beta')} />}

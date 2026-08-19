@@ -39,48 +39,48 @@ export interface Transaction extends Record<string, unknown> {
 export const modules: Module[] = [
   {
     id: 'm1',
-    title: 'Foundations of Design Systems',
+    title: 'Foundations of the Stock Market',
     lessons: [
-      { id: 'l1-1', title: 'Why design systems fail in practice', isRecorded: true },
-      { id: 'l1-2', title: 'Auditing your existing UI for token candidates', isRecorded: true },
-      { id: 'l1-3', title: 'Choosing a token architecture', isRecorded: true },
+      { id: 'l1-1', title: 'What actually happens when you buy a stock', isRecorded: true },
+      { id: 'l1-2', title: 'Stocks vs. bonds vs. funds: knowing what you own', isRecorded: true },
+      { id: 'l1-3', title: 'Reading a stock quote without getting overwhelmed', isRecorded: true },
     ],
   },
   {
     id: 'm2',
-    title: 'Building the Token Layer',
+    title: 'Building Your Investing Toolkit',
     lessons: [
-      { id: 'l2-1', title: 'Color tokens and semantic naming', isRecorded: true },
-      { id: 'l2-2', title: 'Spacing and type scales', isRecorded: true },
-      { id: 'l2-3', title: 'Token naming conventions', isRecorded: true },
-      { id: 'l2-4', title: 'Exporting tokens to code', isRecorded: true },
+      { id: 'l2-1', title: 'Opening and funding a brokerage account', isRecorded: true },
+      { id: 'l2-2', title: 'Index funds and ETFs: the boring stuff that works', isRecorded: true },
+      { id: 'l2-3', title: 'Diversification and risk tolerance', isRecorded: true },
+      { id: 'l2-4', title: 'Dollar-cost averaging in practice', isRecorded: true },
     ],
   },
   {
     id: 'm3',
-    title: 'Component Architecture',
+    title: 'Reading the Market',
     lessons: [
-      { id: 'l3-1', title: 'Anatomy-first component specs', isRecorded: true },
-      { id: 'l3-2', title: 'Variants, states, and props', isRecorded: true },
-      { id: 'l3-3', title: 'Composition vs. configuration', isRecorded: true },
-      { id: 'l3-4', title: 'Documenting components for engineers', isRecorded: true },
+      { id: 'l3-1', title: "How to read a company's earnings report", isRecorded: true },
+      { id: 'l3-2', title: 'P/E ratios and other numbers that matter', isRecorded: true },
+      { id: 'l3-3', title: 'Market cycles: bulls, bears, and corrections', isRecorded: true },
+      { id: 'l3-4', title: 'Spotting hype vs. substance', isRecorded: true },
     ],
   },
   {
     id: 'm4',
-    title: 'Shipping to Production',
+    title: 'Building and Managing a Portfolio',
     lessons: [
-      { id: 'l4-1', title: 'Handoff without a handoff meeting', isRecorded: true },
-      { id: 'l4-2', title: 'Working inside a design-system PR', isRecorded: true },
-      { id: 'l4-3', title: 'Versioning and deprecation', isRecorded: true },
-      { id: 'l4-4', title: 'Measuring adoption', isRecorded: true },
+      { id: 'l4-1', title: 'Asset allocation for your first portfolio', isRecorded: true },
+      { id: 'l4-2', title: 'Rebalancing without overthinking it', isRecorded: true },
+      { id: 'l4-3', title: 'Taxes, dividends, and account types (401k / IRA / brokerage)', isRecorded: true },
+      { id: 'l4-4', title: 'When (and when not) to sell', isRecorded: true },
     ],
   },
   {
     id: 'm5',
-    title: 'Case Studies & Critique',
+    title: 'Staying the Course',
     lessons: [
-      { id: 'l5-1', title: 'Live teardown: a real design system', isRecorded: true },
+      { id: 'l5-1', title: 'Live teardown: analyzing a real portfolio', isRecorded: true },
       { id: 'l5-2', title: 'Cohort project reviews', isRecorded: false },
       { id: 'l5-3', title: 'Closing session + Q&A', isRecorded: false },
     ],
@@ -104,12 +104,12 @@ export const cohortRoster: CohortStudent[] = [
   { id: 's1', name: 'Jordan Ames', progress: 100, status: 'completed', lastActive: '2 days ago' },
   { id: 's2', name: 'Priya Chandra', progress: 100, status: 'completed', lastActive: '5 days ago' },
   { id: 's3', name: 'Marcus Webb', progress: 89, status: 'in-progress', lastActive: 'Today' },
-  { id: 's4', name: 'Sofia Torres', progress: 61, status: 'stalled', lastActive: '9 days ago', stalledAt: 'Token naming conventions' },
+  { id: 's4', name: 'Sofia Torres', progress: 61, status: 'stalled', lastActive: '9 days ago', stalledAt: 'Diversification and risk tolerance' },
   { id: 's5', name: 'Devon Blake', progress: 100, status: 'completed', lastActive: '1 day ago' },
-  { id: 's6', name: 'Amara Osei', progress: 33, status: 'stalled', lastActive: '12 days ago', stalledAt: 'Token naming conventions' },
+  { id: 's6', name: 'Amara Osei', progress: 33, status: 'stalled', lastActive: '12 days ago', stalledAt: 'Diversification and risk tolerance' },
   { id: 's7', name: 'Liam Chen', progress: 94, status: 'in-progress', lastActive: 'Today' },
   { id: 's8', name: 'Naomi Reyes', progress: 100, status: 'completed', lastActive: '3 days ago' },
-  { id: 's9', name: 'Ravi Patel', progress: 22, status: 'stalled', lastActive: '14 days ago', stalledAt: 'Spacing and type scales' },
+  { id: 's9', name: 'Ravi Patel', progress: 22, status: 'stalled', lastActive: '14 days ago', stalledAt: 'Opening and funding a brokerage account' },
   { id: 's10', name: 'Ella Fitzgerald', progress: 78, status: 'in-progress', lastActive: 'Yesterday' },
 ];
 
@@ -118,19 +118,19 @@ export const betaFeedback: FeedbackItem[] = [
     id: 'f1',
     author: 'Marcus Webb',
     rating: 5,
-    quote: 'Finally a course that shows the PR review, not just the Figma file.',
+    quote: 'Finally a course that shows me an actual brokerage account, not just theory.',
   },
   {
     id: 'f2',
     author: 'Sofia Torres',
     rating: 3,
-    quote: 'Module 4 lost me. I get why tokens matter but the naming lesson felt rushed.',
+    quote: 'Module 2 lost me a bit — I get why diversification matters but the risk tolerance lesson felt rushed.',
   },
   {
     id: 'f3',
     author: 'Naomi Reyes',
     rating: 5,
-    quote: 'The critique sessions alone are worth it.',
+    quote: 'The portfolio teardown sessions alone are worth it.',
   },
 ];
 
@@ -146,7 +146,7 @@ export const recentTransactions: Transaction[] = [
 ];
 
 export const course = {
-  title: 'Figma to Production: A Design Systems Workshop',
+  title: "Investing Fundamentals: Build Your First Stock Portfolio",
   instructor: 'Priya Desai',
   createdOn: 'Jun 2, 2026',
   lastEdited: '2 hours ago',
@@ -160,7 +160,7 @@ export const course = {
     completionRate: 0.68,
     avgRating: 4.6,
     ratingCount: 128,
-    dropOffLesson: 'Token naming conventions (Module 2.3)',
+    dropOffLesson: 'Diversification and risk tolerance (Module 2.3)',
     dropOffPercent: 24,
     lowRatedCount: 3,
     roster: cohortRoster,
