@@ -11,15 +11,16 @@ import { Banner } from '@astryxdesign/core/Banner';
 import { Divider } from '@astryxdesign/core/Divider';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Button } from '@astryxdesign/core/Button';
-import { course } from '@/lib/data';
+import type { betaCourse } from '@/lib/data';
 
 interface PromoteDialogProps {
+  course: typeof betaCourse;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onConfirm: () => void;
 }
 
-export function PromoteDialog({ isOpen, onOpenChange, onConfirm }: PromoteDialogProps) {
+export function PromoteDialog({ course, isOpen, onOpenChange, onConfirm }: PromoteDialogProps) {
   const [reviewedFeedback, setReviewedFeedback] = useState(false);
   const [curriculumFinal, setCurriculumFinal] = useState(false);
   const [understandsIrreversible, setUnderstandsIrreversible] = useState(false);
@@ -52,10 +53,10 @@ export function PromoteDialog({ isOpen, onOpenChange, onConfirm }: PromoteDialog
               <Heading level={5}>What happens when you publish</Heading>
               <List hasDividers density="compact" listStyle="disc">
                 <ListItem label={`Public enrollment opens immediately at $${course.price}/seat`} />
-                <ListItem label={`Your ${course.beta.invitedCount} beta students keep free lifetime access`} />
+                <ListItem label={`Your ${course.invitedCount} beta students keep free lifetime access`} />
                 <ListItem label="The curriculum locks — further edits require a new course version" />
                 <ListItem
-                  label={`Your public rating starts at ${course.beta.avgRating}★ from ${course.beta.ratingCount} beta ratings — visible on your profile immediately`}
+                  label={`Your public rating starts at ${course.avgRating}★ from ${course.ratingCount} beta ratings — visible on your profile immediately`}
                 />
               </List>
             </VStack>
@@ -63,7 +64,7 @@ export function PromoteDialog({ isOpen, onOpenChange, onConfirm }: PromoteDialog
             <Banner
               status="warning"
               container="card"
-              title={`${course.beta.lowRatedCount} of ${course.beta.invitedCount} beta students rated below 4 stars`}
+              title={`${course.lowRatedCount} of ${course.invitedCount} beta students rated below 4 stars`}
               description="Worth a read before this goes public — their feedback is what future students will echo first."
             />
 

@@ -12,7 +12,7 @@ import { Icon } from '@astryxdesign/core/Icon';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import type { CourseState } from '@/lib/data';
 
-const STATE_META: Record<
+export const STATE_META: Record<
   CourseState,
   {
     label: string;
@@ -35,6 +35,7 @@ interface CourseHeaderProps {
   bannerHeading: string;
   bannerDescription: string;
   actions: ReactNode;
+  switcher?: ReactNode;
 }
 
 export function CourseHeader({
@@ -45,16 +46,20 @@ export function CourseHeader({
   bannerHeading,
   bannerDescription,
   actions,
+  switcher,
 }: CourseHeaderProps) {
   const stateMeta = STATE_META[state];
 
   return (
     <LayoutHeader hasDivider>
-      <VStack gap={4} padding={4} paddingBlock={3}>
-        <Breadcrumbs>
-          <BreadcrumbItem href="#">Courses</BreadcrumbItem>
-          <BreadcrumbItem isCurrent>{title}</BreadcrumbItem>
-        </Breadcrumbs>
+      <VStack gap={4} padding={8}>
+        <HStack justify="between" vAlign="center">
+          <Breadcrumbs>
+            <BreadcrumbItem href="#">Courses</BreadcrumbItem>
+            <BreadcrumbItem isCurrent>{title}</BreadcrumbItem>
+          </Breadcrumbs>
+          {switcher}
+        </HStack>
 
         <VStack gap={1}>
           <HStack gap={3} vAlign="center">

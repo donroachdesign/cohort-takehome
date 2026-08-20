@@ -13,14 +13,16 @@ import { ProgressBar } from '@astryxdesign/core/ProgressBar';
 import { MetadataList, MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Divider } from '@astryxdesign/core/Divider';
 import { CourseHeader } from './CourseHeader';
-import { course, totalLessons, recordedLessons, draftReadiness } from '@/lib/data';
+import type { ReactNode } from 'react';
+import type { pfbDraft } from '@/lib/data';
 
 interface DraftViewProps {
-  onInviteBeta: () => void;
+  course: typeof pfbDraft;
+  switcher?: ReactNode;
 }
 
-export function DraftView({ onInviteBeta }: DraftViewProps) {
-  const allRecorded = recordedLessons === totalLessons;
+export function DraftView({ course, switcher }: DraftViewProps) {
+  const allRecorded = course.recordedLessons === course.totalLessons;
 
   return (
     <Layout
@@ -32,20 +34,20 @@ export function DraftView({ onInviteBeta }: DraftViewProps) {
           instructor={course.instructor}
           meta={`Created ${course.createdOn} · Edited ${course.lastEdited}`}
           bannerHeading="In Draft"
-          bannerDescription={`${recordedLessons} of ${totalLessons} lessons recorded · not visible to students yet`}
+          bannerDescription={`${course.recordedLessons} of ${course.totalLessons} lessons recorded · not visible to students yet`}
+          switcher={switcher}
           actions={
             <Button
               label="Invite beta cohort"
               variant="primary"
               isDisabled={!allRecorded}
               tooltip={!allRecorded ? 'Finish recording all lessons before inviting a beta cohort' : undefined}
-              onClick={onInviteBeta}
             />
           }
         />
       }
       content={
-        <LayoutContent padding={4}>
+        <LayoutContent padding={8}>
           <VStack gap={4}>
             {course.modules.map(module => {
               const done = module.lessons.filter(l => l.isRecorded).length;
@@ -82,14 +84,14 @@ export function DraftView({ onInviteBeta }: DraftViewProps) {
         </LayoutContent>
       }
       end={
-        <LayoutPanel width={340} hasDivider padding={4}>
+        <LayoutPanel width={340} hasDivider padding={8}>
           <VStack gap={5}>
             <VStack gap={2}>
               <Heading level={4}>Readiness</Heading>
               <ProgressBar
                 label="Lessons recorded"
-                value={recordedLessons}
-                max={totalLessons}
+                value={course.recordedLessons}
+                max={course.totalLessons}
                 hasValueLabel
                 variant={allRecorded ? 'success' : 'accent'}
               />
@@ -111,7 +113,7 @@ export function DraftView({ onInviteBeta }: DraftViewProps) {
             <VStack gap={2}>
               <Heading level={5}>Before inviting a beta cohort</Heading>
               <List density="compact">
-                {draftReadiness.map(item => (
+                {course.readiness.map(item => (
                   <ListItem
                     key={item.label}
                     label={item.label}

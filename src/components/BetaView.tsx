@@ -14,10 +14,13 @@ import { List, ListItem } from '@astryxdesign/core/List';
 import { Table, proportional, pixel } from '@astryxdesign/core/Table';
 import type { TableColumn } from '@astryxdesign/core/Table';
 import { CourseHeader } from './CourseHeader';
-import { course, type CohortStudent } from '@/lib/data';
+import type { ReactNode } from 'react';
+import type { betaCourse, CohortStudent } from '@/lib/data';
 
 interface BetaViewProps {
+  course: typeof betaCourse;
   onPromote: () => void;
+  switcher?: ReactNode;
 }
 
 const rosterColumns: TableColumn<CohortStudent>[] = [
@@ -44,9 +47,8 @@ const rosterColumns: TableColumn<CohortStudent>[] = [
   { key: 'lastActive', header: 'Last active', width: pixel(120) },
 ];
 
-export function BetaView({ onPromote }: BetaViewProps) {
-  const { beta } = course;
-  const completedCount = beta.roster.filter(s => s.status === 'completed').length;
+export function BetaView({ course, onPromote, switcher }: BetaViewProps) {
+  const completedCount = course.roster.filter(s => s.status === 'completed').length;
 
   return (
     <Layout
@@ -56,14 +58,15 @@ export function BetaView({ onPromote }: BetaViewProps) {
           state="beta"
           title={course.title}
           instructor={course.instructor}
-          meta={`${beta.invitedCount} students invited · started ${beta.startedOn}`}
+          meta={`${course.invitedCount} students invited · started ${course.startedOn}`}
           bannerHeading="In Beta"
-          bannerDescription={`Day ${beta.daysElapsed} of a suggested ${beta.suggestedDurationDays} · ${beta.invitedCount} invited students, free access`}
+          bannerDescription={`Day ${course.daysElapsed} of a suggested ${course.suggestedDurationDays} · ${course.invitedCount} invited students, free access`}
+          switcher={switcher}
           actions={<Button label="Promote to Open" variant="primary" onClick={onPromote} />}
         />
       }
       content={
-        <LayoutContent padding={4}>
+        <LayoutContent padding={8}>
           <VStack gap={6}>
             <Grid columns={{ minWidth: 220 }} gap={4}>
               <Card padding={4}>
@@ -73,10 +76,10 @@ export function BetaView({ onPromote }: BetaViewProps) {
                     <Text type="supporting">Beta cohort</Text>
                   </HStack>
                   <Heading level={2} type="display-3">
-                    {beta.invitedCount}
+                    {course.invitedCount}
                   </Heading>
                   <Text type="supporting">
-                    invited · day {beta.daysElapsed} of {beta.suggestedDurationDays}
+                    invited · day {course.daysElapsed} of {course.suggestedDurationDays}
                   </Text>
                 </VStack>
               </Card>
@@ -85,16 +88,16 @@ export function BetaView({ onPromote }: BetaViewProps) {
                 <VStack gap={2}>
                   <Text type="supporting">Completion rate</Text>
                   <Heading level={2} type="display-3">
-                    {Math.round(beta.completionRate * 100)}%
+                    {Math.round(course.completionRate * 100)}%
                   </Heading>
                   <ProgressBar
                     label="Completion rate"
                     isLabelHidden
-                    value={Math.round(beta.completionRate * 100)}
+                    value={Math.round(course.completionRate * 100)}
                     variant="accent"
                   />
                   <Text type="supporting">
-                    {completedCount} of {beta.invitedCount} completed
+                    {completedCount} of {course.invitedCount} completed
                   </Text>
                 </VStack>
               </Card>
@@ -106,9 +109,9 @@ export function BetaView({ onPromote }: BetaViewProps) {
                     <Text type="supporting">Avg. lesson rating</Text>
                   </HStack>
                   <Heading level={2} type="display-3">
-                    {beta.avgRating} / 5
+                    {course.avgRating} / 5
                   </Heading>
-                  <Text type="supporting">{beta.ratingCount} ratings</Text>
+                  <Text type="supporting">{course.ratingCount} ratings</Text>
                 </VStack>
               </Card>
 
@@ -119,23 +122,23 @@ export function BetaView({ onPromote }: BetaViewProps) {
                     <Text type="supporting">Drop-off hotspot</Text>
                   </HStack>
                   <Heading level={2} type="display-3">
-                    {beta.dropOffPercent}%
+                    {course.dropOffPercent}%
                   </Heading>
-                  <Text type="supporting">stall at {beta.dropOffLesson}</Text>
+                  <Text type="supporting">stall at {course.dropOffLesson}</Text>
                 </VStack>
               </Card>
             </Grid>
 
             <VStack gap={2}>
               <Heading level={4}>Cohort roster</Heading>
-              <Table data={beta.roster} columns={rosterColumns} idKey="id" hasHover dividers="rows" />
-              <Text type="supporting">Showing 10 of {beta.invitedCount} invited students</Text>
+              <Table data={course.roster} columns={rosterColumns} idKey="id" hasHover dividers="rows" />
+              <Text type="supporting">Showing 10 of {course.invitedCount} invited students</Text>
             </VStack>
 
             <VStack gap={2}>
               <Heading level={4}>Student feedback</Heading>
               <List hasDividers density="compact">
-                {beta.feedback.map(item => (
+                {course.feedback.map(item => (
                   <ListItem key={item.id} label={`${item.author} · ${item.rating}★`} description={item.quote} />
                 ))}
               </List>
