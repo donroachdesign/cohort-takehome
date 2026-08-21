@@ -58,6 +58,8 @@ export interface OpenCourseData {
   weeklyDelta: number;
   combinedRating: number;
   combinedRatingCount: number;
+  completionRate: number;
+  landingPageVisitors: number;
   platformFeeRate: number;
   payoutSchedule: string;
   refundReasons: RefundReason[];
@@ -73,7 +75,6 @@ function draftReadinessFor(modules: Module[]) {
     recordedLessons: recorded,
     readiness: [
       { label: 'Curriculum outline', done: true },
-      { label: `Lesson videos recorded (${recorded}/${total})`, done: recorded === total },
       { label: 'Pricing set', done: false },
       { label: 'Beta cohort invite list', done: false },
     ],
@@ -204,6 +205,8 @@ export const pfbOpen: OpenCourseData = {
   weeklyDelta: 37,
   combinedRating: 4.8,
   combinedRatingCount: 245,
+  completionRate: 0.58,
+  landingPageVisitors: 4460,
   platformFeeRate: 0.15,
   payoutSchedule: 'Every Friday · next payout Aug 21',
   refundReasons: [
@@ -285,6 +288,8 @@ export const investingOpenData: OpenCourseData = {
   weeklyDelta: 33,
   combinedRating: 4.7,
   combinedRatingCount: 203,
+  completionRate: 0.52,
+  landingPageVisitors: 4100,
   platformFeeRate: 0.15,
   payoutSchedule: 'Every Friday · next payout Aug 21',
   refundReasons: [
@@ -355,6 +360,8 @@ export const optionsOpen: OpenCourseData = {
   weeklyDelta: 16,
   combinedRating: 4.5,
   combinedRatingCount: 88,
+  completionRate: 0.46,
+  landingPageVisitors: 2900,
   platformFeeRate: 0.15,
   payoutSchedule: 'Every Friday · next payout Aug 21',
   refundReasons: [
@@ -408,4 +415,8 @@ export function payoutAmount(open: OpenCourseData) {
 
 export function refundRate(open: OpenCourseData) {
   return (open.refundedCount / open.enrolledCount) * 100;
+}
+
+export function conversionRate(open: OpenCourseData) {
+  return (open.enrolledCount / open.landingPageVisitors) * 100;
 }

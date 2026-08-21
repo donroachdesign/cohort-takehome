@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { PencilLine, FlaskConical, Rocket, type LucideIcon } from 'lucide-react';
+import { PencilLine, FlaskConical, Rocket, Star, type LucideIcon } from 'lucide-react';
 import { LayoutHeader } from '@astryxdesign/core/Layout';
 import { Breadcrumbs, BreadcrumbItem } from '@astryxdesign/core/Breadcrumbs';
 import { Heading } from '@astryxdesign/core/Heading';
@@ -27,11 +27,34 @@ export const STATE_META: Record<
   open: { label: 'Open', badgeVariant: 'success', cardVariant: 'green', iconColor: 'success', icon: Rocket },
 };
 
+// Astryx's own Product Detail template uses this exact number+stars+count
+// shape for a course/product's public rating — no dropdown, since there's
+// no per-tier breakdown data to make one meaningful.
+function StarRating({ value, count, note }: { value: number; count: number; note?: string }) {
+  const filled = Math.round(value);
+  return (
+    <HStack gap={1} vAlign="center">
+      {Array.from({ length: 5 }, (_, i) => (
+        <Star
+          key={i}
+          size={16}
+          fill={i < filled ? 'var(--color-warning)' : 'none'}
+          stroke={i < filled ? 'var(--color-warning)' : 'var(--color-border-emphasized)'}
+        />
+      ))}
+      <Text type="supporting">
+        {value} ({count}){note ? ` · ${note}` : ''}
+      </Text>
+    </HStack>
+  );
+}
+
 interface CourseHeaderProps {
   state: CourseState;
   title: string;
   instructor: string;
   meta: string;
+  rating?: { value: number; count: number; note?: string };
   bannerHeading: string;
   bannerDescription: string;
   actions: ReactNode;
@@ -43,6 +66,7 @@ export function CourseHeader({
   title,
   instructor,
   meta,
+  rating,
   bannerHeading,
   bannerDescription,
   actions,
@@ -66,6 +90,7 @@ export function CourseHeader({
             <Heading level={1}>{title}</Heading>
             <Badge variant={stateMeta.badgeVariant} label={stateMeta.label} />
           </HStack>
+          {rating && <StarRating value={rating.value} count={rating.count} note={rating.note} />}
           <Text type="supporting">
             by {instructor} · {meta}
           </Text>

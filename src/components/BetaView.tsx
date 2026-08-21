@@ -1,6 +1,6 @@
 'use client';
 
-import { Users, TriangleAlert, Star } from 'lucide-react';
+import { Users, TriangleAlert } from 'lucide-react';
 import { Layout, LayoutContent } from '@astryxdesign/core/Layout';
 import { Card } from '@astryxdesign/core/Card';
 import { Grid } from '@astryxdesign/core/Grid';
@@ -59,6 +59,7 @@ export function BetaView({ course, onPromote, switcher }: BetaViewProps) {
           title={course.title}
           instructor={course.instructor}
           meta={`${course.invitedCount} students invited · started ${course.startedOn}`}
+          rating={{ value: course.avgRating, count: course.ratingCount, note: 'non-public beta rating' }}
           bannerHeading="In Beta"
           bannerDescription={`Day ${course.daysElapsed} of a suggested ${course.suggestedDurationDays} · ${course.invitedCount} invited students, free access`}
           switcher={switcher}
@@ -99,19 +100,6 @@ export function BetaView({ course, onPromote, switcher }: BetaViewProps) {
                   <Text type="supporting">
                     {completedCount} of {course.invitedCount} completed
                   </Text>
-                </VStack>
-              </Card>
-
-              <Card padding={4}>
-                <VStack gap={1}>
-                  <HStack gap={2} vAlign="center">
-                    <Icon icon={Star} size="sm" color="secondary" />
-                    <Text type="supporting">Avg. lesson rating</Text>
-                  </HStack>
-                  <Heading level={2} type="display-3">
-                    {course.avgRating} / 5
-                  </Heading>
-                  <Text type="supporting">{course.ratingCount} ratings</Text>
                 </VStack>
               </Card>
 

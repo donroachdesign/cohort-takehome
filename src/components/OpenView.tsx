@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { Users, DollarSign, Undo2, Star, ExternalLink } from 'lucide-react';
+import { Users, DollarSign, Undo2, ExternalLink, CheckCircle2, Target } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Layout, LayoutContent } from '@astryxdesign/core/Layout';
 import { Card } from '@astryxdesign/core/Card';
@@ -32,6 +32,7 @@ import {
   platformFee,
   payoutAmount,
   refundRate,
+  conversionRate,
   type OpenCourseData,
   type Transaction,
 } from '@/lib/data';
@@ -121,6 +122,7 @@ export function OpenView({ course, switcher }: OpenViewProps) {
             title={course.title}
             instructor={course.instructor}
             meta={`Open since ${course.openedOn}`}
+            rating={{ value: course.combinedRating, count: course.combinedRatingCount }}
             bannerHeading="Open for enrollment"
             bannerDescription={`Live since ${course.openedOn} · public enrollment at $${course.price}/seat`}
             switcher={switcher}
@@ -170,6 +172,34 @@ export function OpenView({ course, switcher }: OpenViewProps) {
                 <Card padding={4}>
                   <VStack gap={1}>
                     <HStack gap={2} vAlign="center">
+                      <Icon icon={Target} size="sm" color="secondary" />
+                      <Text type="supporting">Conversion rate</Text>
+                    </HStack>
+                    <Heading level={2} type="display-3">
+                      {conversionRate(course).toFixed(1)}%
+                    </Heading>
+                    <Text type="supporting">
+                      {course.enrolledCount} of {course.landingPageVisitors.toLocaleString()} visitors
+                    </Text>
+                  </VStack>
+                </Card>
+
+                <Card padding={4}>
+                  <VStack gap={1}>
+                    <HStack gap={2} vAlign="center">
+                      <Icon icon={CheckCircle2} size="sm" color="secondary" />
+                      <Text type="supporting">Completion rate</Text>
+                    </HStack>
+                    <Heading level={2} type="display-3">
+                      {Math.round(course.completionRate * 100)}%
+                    </Heading>
+                    <Text type="supporting">of enrolled students</Text>
+                  </VStack>
+                </Card>
+
+                <Card padding={4}>
+                  <VStack gap={1}>
+                    <HStack gap={2} vAlign="center">
                       <Icon icon={Undo2} size="sm" color="secondary" />
                       <Text type="supporting">Refund rate</Text>
                     </HStack>
@@ -181,99 +211,89 @@ export function OpenView({ course, switcher }: OpenViewProps) {
                     </Text>
                   </VStack>
                 </Card>
-
-                <Card padding={4}>
-                  <VStack gap={1}>
-                    <HStack gap={2} vAlign="center">
-                      <Icon icon={Star} size="sm" color="secondary" />
-                      <Text type="supporting">Rating</Text>
-                    </HStack>
-                    <Heading level={2} type="display-3">
-                      {course.combinedRating} / 5
-                    </Heading>
-                    <Text type="supporting">{course.combinedRatingCount} ratings</Text>
-                  </VStack>
-                </Card>
               </Grid>
 
               <HStack gap={6} align="start" wrap="wrap">
                 <StackItem size="fill">
-                  <VStack gap={6}>
-                    <Card padding={4}>
-                      <VStack gap={4}>
-                        <Heading level={4}>Revenue, last 8 weeks</Heading>
-                        <RevenueChart data={course.weeklyRevenue} />
-                      </VStack>
-                    </Card>
-
-                    <Card padding={0}>
-                      <VStack gap={0}>
-                        <Toolbar
-                          label="Enrollment actions"
-                          startContent={<Heading level={4}>Recent enrollments</Heading>}
-                          endContent={
-                            <Button variant="ghost" size="sm" label="Export CSV" icon={<Icon icon="copy" size="sm" />} />
-                          }
-                        />
-                        <Divider />
-                        <Table
-                          data={course.transactions}
-                          columns={transactionColumns}
-                          idKey="id"
-                          hasHover
-                          plugins={{ rowStatus }}
-                        />
-                        <Divider />
-                        <HStack justify="center" padding={3}>
-                          <Text type="supporting">
-                            Showing {course.transactions.length} of {course.enrolledCount} enrollments
-                          </Text>
-                        </HStack>
-                      </VStack>
-                    </Card>
-                  </VStack>
+                  <Card padding={4}>
+                    <VStack gap={4}>
+                      <Heading level={4}>Revenue, last 8 weeks</Heading>
+                      <RevenueChart data={course.weeklyRevenue} />
+                    </VStack>
+                  </Card>
                 </StackItem>
 
                 <StackItem>
-                  <VStack gap={6} width={340}>
-                    <Card padding={4}>
-                      <VStack gap={3}>
-                        <Heading level={4}>Revenue breakdown</Heading>
-                        <MetadataList columns="single">
-                          <MetadataListItem label="Gross revenue">
-                            <Text hasTabularNumbers>${grossRevenue(course).toLocaleString()}</Text>
-                          </MetadataListItem>
-                          <MetadataListItem label="Refunds">
-                            <Text hasTabularNumbers color="secondary">
-                              −${refunds(course).toLocaleString()}
-                            </Text>
-                          </MetadataListItem>
-                          <MetadataListItem label={`Platform fee (${Math.round(course.platformFeeRate * 100)}%)`}>
-                            <Text hasTabularNumbers color="secondary">
-                              −${platformFee(course).toLocaleString()}
-                            </Text>
-                          </MetadataListItem>
-                          <MetadataListItem label="Your payout">
-                            <Text hasTabularNumbers weight="semibold">
-                              ${payoutAmount(course).toLocaleString()}
-                            </Text>
-                          </MetadataListItem>
-                          <MetadataListItem label="Schedule">{course.payoutSchedule}</MetadataListItem>
-                        </MetadataList>
-                      </VStack>
-                    </Card>
+                  <Card padding={4} width={340}>
+                    <VStack gap={3}>
+                      <Heading level={4}>Revenue breakdown</Heading>
+                      <MetadataList columns="single">
+                        <MetadataListItem label="Gross revenue">
+                          <Text hasTabularNumbers>${grossRevenue(course).toLocaleString()}</Text>
+                        </MetadataListItem>
+                        <MetadataListItem label="Refunds">
+                          <Text hasTabularNumbers color="secondary">
+                            −${refunds(course).toLocaleString()}
+                          </Text>
+                        </MetadataListItem>
+                        <MetadataListItem label={`Platform fee (${Math.round(course.platformFeeRate * 100)}%)`}>
+                          <Text hasTabularNumbers color="secondary">
+                            −${platformFee(course).toLocaleString()}
+                          </Text>
+                        </MetadataListItem>
+                        <MetadataListItem label="Your payout">
+                          <Text hasTabularNumbers weight="semibold">
+                            ${payoutAmount(course).toLocaleString()}
+                          </Text>
+                        </MetadataListItem>
+                        <MetadataListItem label="Schedule">{course.payoutSchedule}</MetadataListItem>
+                      </MetadataList>
+                    </VStack>
+                  </Card>
+                </StackItem>
+              </HStack>
 
-                    <Card padding={4}>
-                      <VStack gap={3}>
-                        <Heading level={4}>Why students refunded</Heading>
-                        <List hasDividers density="compact">
-                          {course.refundReasons.map(r => (
-                            <ListItem key={r.id} label={r.reason} endContent={<Text type="supporting">{r.count}</Text>} />
-                          ))}
-                        </List>
-                      </VStack>
-                    </Card>
-                  </VStack>
+              <HStack gap={6} align="start" wrap="wrap">
+                <StackItem size="fill">
+                  <Card padding={0}>
+                    <VStack gap={0}>
+                      <Toolbar
+                        label="Enrollment actions"
+                        startContent={
+                          <VStack gap={0}>
+                            <Heading level={4}>Recent enrollments</Heading>
+                            <Text type="supporting">
+                              Showing {course.transactions.length} of {course.enrolledCount} enrollments
+                            </Text>
+                          </VStack>
+                        }
+                        endContent={
+                          <Button variant="ghost" size="sm" label="Export CSV" icon={<Icon icon="copy" size="sm" />} />
+                        }
+                      />
+                      <Divider />
+                      <Table
+                        data={course.transactions}
+                        columns={transactionColumns}
+                        idKey="id"
+                        hasHover
+                        plugins={{ rowStatus }}
+                      />
+                    </VStack>
+                  </Card>
+                </StackItem>
+
+                <StackItem>
+                  <Card padding={4} width={340}>
+                    <VStack gap={3}>
+                      <Heading level={4}>Why students refunded</Heading>
+                      <List hasDividers density="compact">
+                        {course.refundReasons.map(r => (
+                          <ListItem key={r.id} label={r.reason} endContent={<Text type="supporting">{r.count}</Text>} />
+                        ))}
+                      </List>
+                    </VStack>
+                  </Card>
                 </StackItem>
               </HStack>
             </VStack>
