@@ -1,8 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { GripVertical, Pencil, Plus } from 'lucide-react';
+import { GripVertical, Pencil, Plus, Circle } from 'lucide-react';
+import { defineTheme } from '@astryxdesign/core/theme';
+import { Theme } from '@astryxdesign/core';
+import { stoneTheme } from '@astryxdesign/theme-stone/built';
 import { Layout, LayoutContent, LayoutPanel } from '@astryxdesign/core/Layout';
+import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
 import { Card } from '@astryxdesign/core/Card';
 import { VStack, HStack } from '@astryxdesign/core/Stack';
 import { Heading } from '@astryxdesign/core/Heading';
@@ -15,8 +19,8 @@ import { Button } from '@astryxdesign/core/Button';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { ProgressBar } from '@astryxdesign/core/ProgressBar';
 import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { InputGroup, InputGroupText } from '@astryxdesign/core/InputGroup';
-import { Selector } from '@astryxdesign/core/Selector';
+import { Tokenizer } from '@astryxdesign/core/Tokenizer';
+import type { SearchableItem, SearchSource } from '@astryxdesign/core/Typeahead';
 import { MetadataList, MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Divider } from '@astryxdesign/core/Divider';
 import { CourseHeader } from './CourseHeader';
@@ -28,15 +32,38 @@ interface DraftViewProps {
   switcher?: ReactNode;
 }
 
+const emptySource: SearchSource = { search: () => [], bootstrap: () => [] };
+
+// NumberInput defaults to --color-border-emphasized (a stronger outline than
+// Card's --color-border) since a standalone form field needs a clearer
+// boundary. Scoped to just the Price field so its stroke matches the module
+// cards instead of the rest of the app.
+const cardStrokeFieldTheme = defineTheme({
+  name: 'draft-panel-field-border',
+  extends: stoneTheme,
+  components: {
+    'number-input': { base: { borderColor: 'var(--color-border)' } },
+  },
+});
+
 export function DraftView({ course, switcher }: DraftViewProps) {
   const allRecorded = course.recordedLessons === course.totalLessons;
+  // Curriculum is considered finalized once every lesson is recorded — there's
+  // no separate manual "finalize" step, so this is derived, not its own toggle.
+  const curriculumFinalized = allRecorded;
   const [price, setPrice] = useState<number | null>(null);
-  const [visibility, setVisibility] = useState('private');
-  const readiness = course.readiness.map(item =>
-    item.label === 'Pricing set' ? { ...item, done: price !== null && price > 0 } : item,
-  );
+  const [invitees, setInvitees] = useState<SearchableItem[]>([]);
+  const [isInviteListOpen, setIsInviteListOpen] = useState(false);
+
+  const hasInvitees = invitees.length > 0;
+  const readyForBeta = allRecorded && hasInvitees;
+  const missing = [
+    !allRecorded && 'record all lessons',
+    !hasInvitees && 'add beta invitees',
+  ].filter(Boolean) as string[];
 
   return (
+    <>
     <Layout
       height="fill"
       header={
@@ -52,8 +79,8 @@ export function DraftView({ course, switcher }: DraftViewProps) {
             <Button
               label="Invite beta cohort"
               variant="primary"
-              isDisabled={!allRecorded}
-              tooltip={!allRecorded ? 'Finish recording all lessons before inviting a beta cohort' : undefined}
+              isDisabled={!readyForBeta}
+              tooltip={!readyForBeta ? `Still needed: ${missing.join(', ')}` : undefined}
             />
           }
         />
@@ -158,73 +185,110 @@ export function DraftView({ course, switcher }: DraftViewProps) {
 
             <Divider />
 
-            <MetadataList columns="single">
-              <MetadataListItem label="Price">
-                <HStack justify="end">
-                  <InputGroup label="Price" isLabelHidden size="sm">
-                    <InputGroupText>$</InputGroupText>
-                    <NumberInput
-                      label="Amount"
-                      isLabelHidden
-                      value={price}
-                      onChange={setPrice}
-                      placeholder="0"
-                      min={0}
-                      step={1}
-                      hasClear
-                      width={80}
+            <VStack gap={2}>
+              <Heading level={5}>Ready for Beta</Heading>
+              <Text type="supporting">Items remaining until ready for Beta</Text>
+              <List density="compact">
+                <ListItem
+                  label="Curriculum outlined"
+                  startContent={<Icon icon="check" color="success" size="sm" />}
+                  endContent={<Text type="supporting">Done</Text>}
+                />
+                <ListItem
+                  label="Course details added"
+                  startContent={<Icon icon="check" color="success" size="sm" />}
+                  endContent={<Text type="supporting">Done</Text>}
+                />
+                <ListItem
+                  label="Curriculum finalized"
+                  startContent={
+                    <Icon
+                      icon={curriculumFinalized ? 'check' : Circle}
+                      color={curriculumFinalized ? 'success' : 'disabled'}
+                      size="sm"
                     />
-                  </InputGroup>
-                </HStack>
-              </MetadataListItem>
-              <MetadataListItem label="Visibility">
-                <HStack justify="end">
-                  <Selector
-                    label="Visibility"
-                    isLabelHidden
-                    size="sm"
-                    width={140}
-                    value={visibility}
-                    onChange={setVisibility}
-                    options={[
-                      { value: 'private', label: 'Private' },
-                      { value: 'beta', label: 'Invite-only (Beta)' },
-                      { value: 'public', label: 'Public' },
-                    ]}
-                  />
-                </HStack>
-              </MetadataListItem>
-              <MetadataListItem label="Created">
-                <HStack justify="end">
-                  <Text>{course.createdOn}</Text>
-                </HStack>
-              </MetadataListItem>
-              <MetadataListItem label="Last edited">
-                <HStack justify="end">
-                  <Text>{course.lastEdited}</Text>
-                </HStack>
-              </MetadataListItem>
-            </MetadataList>
+                  }
+                  endContent={<Text type="supporting">{curriculumFinalized ? 'Locked' : 'Videos needed'}</Text>}
+                />
+                <ListItem
+                  label={`Beta cohort invite list${hasInvitees ? ` (${invitees.length})` : ''}`}
+                  startContent={
+                    <Icon
+                      icon={hasInvitees ? 'check' : Circle}
+                      color={hasInvitees ? 'success' : 'disabled'}
+                      size="sm"
+                    />
+                  }
+                  endContent={
+                    <button
+                      type="button"
+                      onClick={() => setIsInviteListOpen(true)}
+                      className="cursor-pointer border-0 bg-transparent p-0 hover:underline"
+                    >
+                      <Text type="supporting">{hasInvitees ? 'Edit' : 'Add invitees'}</Text>
+                    </button>
+                  }
+                />
+              </List>
+            </VStack>
 
             <Divider />
 
             <VStack gap={2}>
-              <Heading level={5}>Before inviting a beta cohort</Heading>
-              <List density="compact">
-                {readiness.map(item => (
-                  <ListItem
-                    key={item.label}
-                    label={item.label}
-                    startContent={
-                      <Icon icon={item.done ? 'check' : 'close'} color={item.done ? 'success' : 'disabled'} size="sm" />
-                    }
-                  />
-                ))}
-              </List>
+              <Heading level={5} color="secondary">
+                Before going Open
+              </Heading>
+              <Text type="supporting">Not required until you're ready for public enrollment.</Text>
+              <Theme theme={cardStrokeFieldTheme}>
+                <MetadataList columns="single">
+                  <MetadataListItem label="Price">
+                    <HStack justify="end" gap={1} vAlign="center">
+                      <Text color="secondary">$</Text>
+                      <NumberInput
+                        label="Price"
+                        isLabelHidden
+                        size="sm"
+                        value={price}
+                        onChange={setPrice}
+                        placeholder="0.00"
+                        min={0}
+                        step={1}
+                        hasClear
+                        width={80}
+                      />
+                    </HStack>
+                  </MetadataListItem>
+                </MetadataList>
+              </Theme>
             </VStack>
           </VStack>
         </LayoutPanel>
       }
     />
+    <Dialog isOpen={isInviteListOpen} onOpenChange={setIsInviteListOpen} width={480} purpose="info">
+        <Layout height="auto">
+          <DialogHeader
+            title="Beta cohort invite list"
+            subtitle={`${invitees.length} invited so far`}
+            onOpenChange={setIsInviteListOpen}
+          />
+          <LayoutContent padding={4}>
+            <VStack gap={3}>
+              <Text type="supporting">
+                Add the people you want to test this course for free. They'll get access once you invite the cohort.
+              </Text>
+              <Tokenizer
+                label="Beta invitees"
+                searchSource={emptySource}
+                value={invitees}
+                onChange={items => setInvitees(items)}
+                hasCreate
+                placeholder="Type a name or email and press Enter..."
+              />
+            </VStack>
+          </LayoutContent>
+        </Layout>
+      </Dialog>
+    </>
   );
 }

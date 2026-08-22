@@ -1,24 +1,28 @@
 'use client';
 
 import { Bell } from 'lucide-react';
-import { HStack } from '@astryxdesign/core/Stack';
+import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Icon } from '@astryxdesign/core/Icon';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Avatar } from '@astryxdesign/core/Avatar';
 import { Popover } from '@astryxdesign/core/Popover';
 import { List, ListItem } from '@astryxdesign/core/List';
+import { Text } from '@astryxdesign/core/Text';
 
 interface AccountMenuProps {
   name: string;
+  lastLogin?: string;
 }
 
-export function AccountMenu({ name }: AccountMenuProps) {
+export function AccountMenu({ name, lastLogin }: AccountMenuProps) {
+  const firstName = name.split(' ')[0];
+
   return (
     // me-6 = 24px (token-backed via tailwind-theme.css: --spacing base * 6).
     // TopNav has an 8px (--spacing-2) built-in inset; CourseHeader below it
     // uses 32px (--spacing-8). This closes that gap so the avatar's right
     // edge lines up with the dev-preview switcher's right edge below it.
-    <HStack gap={2} vAlign="center" className="me-6">
+    <HStack gap={3} vAlign="center" className="me-6">
       <IconButton
         icon={<Icon icon={Bell} size="sm" />}
         label="Notifications"
@@ -43,6 +47,10 @@ export function AccountMenu({ name }: AccountMenuProps) {
           size="lg"
         />
       </Popover>
+      <VStack gap={0} align="start">
+        <Text weight="semibold">Welcome back, {firstName}</Text>
+        {lastLogin && <Text type="supporting">Last login {lastLogin}</Text>}
+      </VStack>
     </HStack>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { Users, TriangleAlert } from 'lucide-react';
-import { Layout, LayoutContent } from '@astryxdesign/core/Layout';
+import { Layout, LayoutContent, LayoutPanel } from '@astryxdesign/core/Layout';
 import { Card } from '@astryxdesign/core/Card';
 import { Grid } from '@astryxdesign/core/Grid';
 import { VStack, HStack } from '@astryxdesign/core/Stack';
@@ -10,6 +10,7 @@ import { Text } from '@astryxdesign/core/Text';
 import { Icon } from '@astryxdesign/core/Icon';
 import { Button } from '@astryxdesign/core/Button';
 import { ProgressBar } from '@astryxdesign/core/ProgressBar';
+import { NumberInput } from '@astryxdesign/core/NumberInput';
 import { List, ListItem } from '@astryxdesign/core/List';
 import { Table, proportional, pixel } from '@astryxdesign/core/Table';
 import type { TableColumn } from '@astryxdesign/core/Table';
@@ -19,6 +20,8 @@ import type { betaCourse, CohortStudent } from '@/lib/data';
 
 interface BetaViewProps {
   course: typeof betaCourse;
+  price: number | null;
+  onPriceChange: (value: number | null) => void;
   onPromote: () => void;
   switcher?: ReactNode;
 }
@@ -47,7 +50,7 @@ const rosterColumns: TableColumn<CohortStudent>[] = [
   { key: 'lastActive', header: 'Last active', width: pixel(120) },
 ];
 
-export function BetaView({ course, onPromote, switcher }: BetaViewProps) {
+export function BetaView({ course, price, onPriceChange, onPromote, switcher }: BetaViewProps) {
   const completedCount = course.roster.filter(s => s.status === 'completed').length;
 
   return (
@@ -65,6 +68,29 @@ export function BetaView({ course, onPromote, switcher }: BetaViewProps) {
           switcher={switcher}
           actions={<Button label="Promote to Open" variant="primary" onClick={onPromote} />}
         />
+      }
+      start={
+        <LayoutPanel width={280} hasDivider padding={8}>
+          <VStack gap={2}>
+            <Heading level={4}>Pricing</Heading>
+            <Text type="supporting">What public students pay per seat once you promote to Open.</Text>
+            <HStack gap={1} vAlign="center">
+              <Text color="secondary">$</Text>
+              <NumberInput
+                label="Price per seat"
+                isLabelHidden
+                size="sm"
+                value={price}
+                onChange={onPriceChange}
+                placeholder="0.00"
+                min={0}
+                step={1}
+                hasClear
+                width={80}
+              />
+            </HStack>
+          </VStack>
+        </LayoutPanel>
       }
       content={
         <LayoutContent padding={8}>

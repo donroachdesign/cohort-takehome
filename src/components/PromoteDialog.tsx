@@ -10,22 +10,25 @@ import { List, ListItem } from '@astryxdesign/core/List';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Divider } from '@astryxdesign/core/Divider';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { NumberInput } from '@astryxdesign/core/NumberInput';
 import { Button } from '@astryxdesign/core/Button';
 import type { betaCourse } from '@/lib/data';
 
 interface PromoteDialogProps {
   course: typeof betaCourse;
+  price: number | null;
+  onPriceChange: (value: number | null) => void;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onConfirm: () => void;
 }
 
-export function PromoteDialog({ course, isOpen, onOpenChange, onConfirm }: PromoteDialogProps) {
+export function PromoteDialog({ course, price, onPriceChange, isOpen, onOpenChange, onConfirm }: PromoteDialogProps) {
   const [reviewedFeedback, setReviewedFeedback] = useState(false);
-  const [curriculumFinal, setCurriculumFinal] = useState(false);
   const [understandsIrreversible, setUnderstandsIrreversible] = useState(false);
 
-  const canPublish = reviewedFeedback && curriculumFinal && understandsIrreversible;
+  const priceIsSet = price !== null && price > 0;
+  const canPublish = priceIsSet && reviewedFeedback && understandsIrreversible;
 
   function handleCancel() {
     onOpenChange(false);
@@ -35,7 +38,6 @@ export function PromoteDialog({ course, isOpen, onOpenChange, onConfirm }: Promo
     if (!canPublish) return;
     onConfirm();
     setReviewedFeedback(false);
-    setCurriculumFinal(false);
     setUnderstandsIrreversible(false);
   }
 
@@ -52,9 +54,15 @@ export function PromoteDialog({ course, isOpen, onOpenChange, onConfirm }: Promo
             <VStack gap={2}>
               <Heading level={5}>What happens when you publish</Heading>
               <List hasDividers density="compact" listStyle="disc">
-                <ListItem label={`Public enrollment opens immediately at $${course.price}/seat`} />
+                <ListItem
+                  label={
+                    priceIsSet
+                      ? `Public enrollment opens immediately at $${price}/seat`
+                      : 'Public enrollment opens immediately at the price you set below'
+                  }
+                />
                 <ListItem label={`Your ${course.invitedCount} beta students keep free lifetime access`} />
-                <ListItem label="The curriculum locks — further edits require a new course version" />
+                <ListItem label="The curriculum stays locked, as it's been throughout Beta" />
                 <ListItem
                   label={`Your public rating starts at ${course.avgRating}★ from ${course.ratingCount} beta ratings — visible on your profile immediately`}
                 />
@@ -70,17 +78,34 @@ export function PromoteDialog({ course, isOpen, onOpenChange, onConfirm }: Promo
 
             <Divider />
 
+            <VStack gap={2}>
+              <Heading level={5}>Price</Heading>
+              <Text type="supporting">What public students pay per seat once this publishes.</Text>
+              <HStack gap={1} vAlign="center">
+                <Text color="secondary">$</Text>
+                <NumberInput
+                  label="Price per seat"
+                  isLabelHidden
+                  size="sm"
+                  value={price}
+                  onChange={onPriceChange}
+                  placeholder="0.00"
+                  min={0}
+                  step={1}
+                  hasClear
+                  width={80}
+                />
+              </HStack>
+            </VStack>
+
+            <Divider />
+
             <VStack gap={3}>
               <Heading level={5}>Confirm before publishing</Heading>
               <CheckboxInput
                 label="I've reviewed the cohort feedback"
                 value={reviewedFeedback}
                 onChange={setReviewedFeedback}
-              />
-              <CheckboxInput
-                label="The curriculum is final"
-                value={curriculumFinal}
-                onChange={setCurriculumFinal}
               />
               <CheckboxInput
                 label={`I understand this opens public enrollment immediately and can't be undone`}
@@ -97,7 +122,13 @@ export function PromoteDialog({ course, isOpen, onOpenChange, onConfirm }: Promo
               label="Publish course"
               variant="primary"
               isDisabled={!canPublish}
-              tooltip={!canPublish ? "Check all three boxes to confirm you've reviewed the consequences" : undefined}
+              tooltip={
+                !canPublish
+                  ? !priceIsSet
+                    ? 'Set a price before publishing'
+                    : "Check both boxes to confirm you've reviewed the consequences"
+                  : undefined
+              }
               onClick={handlePublish}
             />
           </HStack>

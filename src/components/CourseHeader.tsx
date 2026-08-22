@@ -16,14 +16,19 @@ export const STATE_META: Record<
   CourseState,
   {
     label: string;
-    badgeVariant: 'neutral' | 'warning' | 'success';
+    badgeVariant: 'neutral' | 'orange' | 'success';
     cardVariant: 'gray' | 'orange' | 'green';
     iconColor: 'secondary' | 'warning' | 'success';
     icon: LucideIcon;
   }
 > = {
   draft: { label: 'Draft', badgeVariant: 'neutral', cardVariant: 'gray', iconColor: 'secondary', icon: PencilLine },
-  beta: { label: 'Beta', badgeVariant: 'warning', cardVariant: 'orange', iconColor: 'warning', icon: FlaskConical },
+  // badgeVariant is 'orange' (not the semantic 'warning') specifically so this
+  // badge reads var(--color-background-orange)/var(--color-text-orange) — the
+  // exact same tokens the "In Beta" banner Card (cardVariant: 'orange') and
+  // the dev-preview switcher's beta chip already use. 'warning' resolves to a
+  // different token (--color-warning) and was the source of the color drift.
+  beta: { label: 'Beta', badgeVariant: 'orange', cardVariant: 'orange', iconColor: 'warning', icon: FlaskConical },
   open: { label: 'Open', badgeVariant: 'success', cardVariant: 'green', iconColor: 'success', icon: Rocket },
 };
 

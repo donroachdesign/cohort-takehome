@@ -70,15 +70,7 @@ export interface OpenCourseData {
 function draftReadinessFor(modules: Module[]) {
   const total = modules.reduce((n, m) => n + m.lessons.length, 0);
   const recorded = modules.reduce((n, m) => n + m.lessons.filter(l => l.isRecorded).length, 0);
-  return {
-    totalLessons: total,
-    recordedLessons: recorded,
-    readiness: [
-      { label: 'Curriculum outline', done: true },
-      { label: 'Pricing set', done: false },
-      { label: 'Beta cohort invite list', done: false },
-    ],
-  };
+  return { totalLessons: total, recordedLessons: recorded };
 }
 
 // ============= PERSONAL FINANCE BASICS — the switchable demo course =============
@@ -144,7 +136,6 @@ export const pfbDraft = {
   modules: pfbModules,
   totalLessons: pfbReadiness.totalLessons,
   recordedLessons: pfbReadiness.recordedLessons,
-  readiness: pfbReadiness.readiness,
 };
 
 const pfbRoster: CohortStudent[] = [
