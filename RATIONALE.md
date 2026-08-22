@@ -1,6 +1,6 @@
 # Rationale
 
-I gave Open the deepest polish. Real money moves there and reputations are on the line, so "calm, dense-but-legible" matters most in that state. Draft and Beta aren't rough shells. Draft is the instructor's daily workbench (curriculum editor, readiness checklist), and Beta reads like a scoreboard (cohort stats, roster, feedback). Leaving either half-built would hurt the density and state-clarity scoring on its own. What I cut: a course-creation flow. "Add course" is there but disabled. A second surface the brief never asked for wasn't worth the depth it'd cost the page actually being scored.
+I gave Open the deepest polish. Real money moves there and reputations are on the line, so "calm, dense-but-legible" matters most there. Draft and Beta aren't rough shells. Draft is the instructor's daily workbench (curriculum editor, readiness checklist), and Beta reads like a scoreboard (cohort stats, roster, feedback). Leaving either half-built would hurt the density and state-clarity scoring on its own. What I cut: a course-creation flow. "Add course" is there but disabled. A second surface the brief never asked for wasn't worth the depth it'd cost the page actually being scored.
 
 State clarity uses two layers: a Badge for the precise read, plus a full-width colored banner with a matching icon, so you understand the state before you've read a word of it.
 
@@ -12,4 +12,4 @@ Three override moments:
 
 3. Price was only settable inside the promote dialog at first, invisible the rest of Beta. I moved it into a persistent panel on the Beta page itself: a decision made in context, not sprung on the instructor at the last screen.
 
-Built with Astryx (Meta's design system) via Claude Code CLI, deployed on Cloudflare via GitHub.
+Built with Claude Code CLI using Astryx (Meta's design system), deployed to Cloudflare Pages via GitHub.
