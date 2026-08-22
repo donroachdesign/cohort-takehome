@@ -238,7 +238,7 @@ export function DraftView({ course, switcher }: DraftViewProps) {
               <Heading level={5} color="secondary">
                 Before going Open
               </Heading>
-              <Text type="supporting">Not required until you're ready for public enrollment.</Text>
+              <Text type="supporting">Not required until you&rsquo;re ready for public enrollment.</Text>
               <Theme theme={cardStrokeFieldTheme}>
                 <MetadataList columns="single">
                   <MetadataListItem label="Price">
@@ -275,7 +275,7 @@ export function DraftView({ course, switcher }: DraftViewProps) {
           <LayoutContent padding={4}>
             <VStack gap={3}>
               <Text type="supporting">
-                Add the people you want to test this course for free. They'll get access once you invite the cohort.
+                Add the people you want to test this course for free. They&rsquo;ll get access once you invite the cohort.
               </Text>
               <Tokenizer
                 label="Beta invitees"
