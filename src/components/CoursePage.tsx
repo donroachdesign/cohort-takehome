@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { LayoutDashboard, BookOpen, Users, Wallet, Settings, Plus } from 'lucide-react';
 import { Theme } from '@astryxdesign/core';
 import { AppShell } from '@astryxdesign/core/AppShell';
@@ -17,52 +17,28 @@ import { BetaView } from './BetaView';
 import { OpenView } from './OpenView';
 import { PromoteDialog } from './PromoteDialog';
 import { CourseStateSwitcher } from './CourseStateSwitcher';
-import { ThemePlayground, type PlaygroundColors } from './ThemePlayground';
 import { STATE_META } from './CourseHeader';
 import { pfbDraft, pfbBeta, pfbOpen, betaCourse, optionsBeta, type CourseState } from '@/lib/data';
 
-// Seeded from the colors already live in the app (not the Vantheon Figma
-// brand palette) so the playground starts from what's on screen right now
-// and lets you explore forward from there.
-const DEFAULT_PLAYGROUND_COLORS: PlaygroundColors = {
-  accent: '#0064E0',
-  navBackground: '#F3F1ED',
-  contentBackground: '#F1F4F7',
-  textPrimary: '#0A1317',
-  textSecondary: '#4E606F',
-  betaAccent: '#C6E4FB',
-};
+const NAV_BACKGROUND = '#F3F1ED';
+const BETA_ACCENT = '#C6E4FB';
+
+const liveTheme = defineTheme({
+  name: 'cohort-live-theme',
+  extends: stoneTheme,
+  tokens: {
+    '--color-background-orange': BETA_ACCENT,
+  },
+  components: {
+    'app-shell-header': { base: { backgroundColor: NAV_BACKGROUND } },
+    'app-shell-sidenav': { base: { backgroundColor: NAV_BACKGROUND } },
+  },
+});
 
 export function CoursePage() {
   const [pfbState, setPfbState] = useState<CourseState>('open');
   const [isPromoteOpen, setIsPromoteOpen] = useState(false);
   const [betaPrice, setBetaPrice] = useState<number | null>(pfbBeta.price);
-  const [playgroundColors, setPlaygroundColors] = useState<PlaygroundColors>(DEFAULT_PLAYGROUND_COLORS);
-
-  const liveTheme = useMemo(
-    () =>
-      defineTheme({
-        name: 'cohort-live-theme',
-        extends: stoneTheme,
-        tokens: {
-          '--color-accent': playgroundColors.accent,
-          '--color-background-body': playgroundColors.contentBackground,
-          '--color-text-primary': playgroundColors.textPrimary,
-          '--color-text-secondary': playgroundColors.textSecondary,
-          '--color-background-orange': playgroundColors.betaAccent,
-        },
-        components: {
-          'app-shell-header': { base: { backgroundColor: playgroundColors.navBackground } },
-          'app-shell-sidenav': { base: { backgroundColor: playgroundColors.navBackground } },
-          // Applied here (the single outermost Theme) rather than via a nested
-          // Theme around each ProgressBar: a nested Theme's own `extends`
-          // re-declares every token — including --color-accent — back to its
-          // base value, silently shadowing this override for anything inside it.
-          'progressbar-fill': { 'variant:accent': { backgroundColor: playgroundColors.accent } },
-        },
-      }),
-    [playgroundColors]
-  );
 
   return (
     <Theme theme={liveTheme} mode="light">
@@ -130,7 +106,7 @@ export function CoursePage() {
         {pfbState === 'draft' && (
           <DraftView
             course={pfbDraft}
-            switcher={<CourseStateSwitcher value={pfbState} onChange={setPfbState} betaColor={playgroundColors.betaAccent} />}
+            switcher={<CourseStateSwitcher value={pfbState} onChange={setPfbState} betaColor={BETA_ACCENT} />}
           />
         )}
         {pfbState === 'beta' && (
@@ -139,11 +115,11 @@ export function CoursePage() {
             price={betaPrice}
             onPriceChange={setBetaPrice}
             onPromote={() => setIsPromoteOpen(true)}
-            switcher={<CourseStateSwitcher value={pfbState} onChange={setPfbState} betaColor={playgroundColors.betaAccent} />}
+            switcher={<CourseStateSwitcher value={pfbState} onChange={setPfbState} betaColor={BETA_ACCENT} />}
           />
         )}
         {pfbState === 'open' && (
-          <OpenView course={pfbOpen} switcher={<CourseStateSwitcher value={pfbState} onChange={setPfbState} betaColor={playgroundColors.betaAccent} />} />
+          <OpenView course={pfbOpen} switcher={<CourseStateSwitcher value={pfbState} onChange={setPfbState} betaColor={BETA_ACCENT} />} />
         )}
 
         <PromoteDialog
@@ -158,12 +134,6 @@ export function CoursePage() {
           }}
         />
       </AppShell>
-
-      <ThemePlayground
-        colors={playgroundColors}
-        defaults={DEFAULT_PLAYGROUND_COLORS}
-        onChange={setPlaygroundColors}
-      />
     </Theme>
   );
 }
