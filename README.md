@@ -13,18 +13,22 @@ Open http://localhost:3000. The page loads on **Open** (the polished state) — 
 
 ## Structure
 
-- `src/lib/data.ts` — all mock data (single course object, three lifecycle sub-states)
+- `src/lib/data.ts` — all mock data: `pfbDraft` / `pfbBeta` / `pfbOpen` are the same course
+  ("Personal Finance Basics") in its three lifecycle states; `betaCourse` / `optionsBeta` are
+  separate courses shown as static, non-interactive rows in the sidebar for context.
+- `src/components/CoursePage.tsx` — app shell, sidebar, and top-level state
 - `src/components/CourseHeader.tsx` — shared breadcrumb/title/state-banner header
 - `src/components/DraftView.tsx`, `BetaView.tsx`, `OpenView.tsx` — per-state page composition
 - `src/components/PromoteDialog.tsx` — the Beta → Open promotion flow
-- `src/components/DevStateSwitcher.tsx` — the dev-only state switcher
+- `src/components/CourseStateSwitcher.tsx` — the dev-only state switcher
+- `src/components/AccountMenu.tsx` — notification bell + account popover in the top nav
 
 See `RATIONALE.md` for the write-up.
 
 ## Checks run
 
-- `npx next build` — clean type check + production build
-- `node ../astryx/scripts/audit-astryx-compliance.mjs` — clean (no raw hex/px, no hand-rolled layout divs, no non-Astryx components)
+- `npm run build` — clean type check + production build
+- `npm ci` — verifies the lockfile matches `package.json` (this is what Cloudflare's build uses)
 
 ## Deploying changes
 

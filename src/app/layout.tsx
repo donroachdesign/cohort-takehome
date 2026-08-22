@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Cohort — Course Detail",
-  description: "Instructor course detail page — Vantheon design take-home",
+  description: "The instructor-facing course detail page for Cohort, where independent instructors build and sell online courses.",
 };
 
 export default function RootLayout({
