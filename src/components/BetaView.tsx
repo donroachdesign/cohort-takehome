@@ -82,6 +82,7 @@ export function BetaView({ course, price, onPriceChange, onPromote, switcher }: 
                 size="sm"
                 value={price}
                 onChange={onPriceChange}
+                formatValue={v => v.toFixed(2)}
                 placeholder="0.00"
                 min={0}
                 step={1}
