@@ -2,6 +2,9 @@
 
 import type { ReactNode } from 'react';
 import { PencilLine, FlaskConical, Rocket, Star, type LucideIcon } from 'lucide-react';
+import { defineTheme } from '@astryxdesign/core/theme';
+import { Theme } from '@astryxdesign/core';
+import { stoneTheme } from '@astryxdesign/theme-stone/built';
 import { LayoutHeader } from '@astryxdesign/core/Layout';
 import { Breadcrumbs, BreadcrumbItem } from '@astryxdesign/core/Breadcrumbs';
 import { Heading } from '@astryxdesign/core/Heading';
@@ -18,7 +21,7 @@ export const STATE_META: Record<
     label: string;
     badgeVariant: 'neutral' | 'orange' | 'success';
     cardVariant: 'gray' | 'orange' | 'green';
-    iconColor: 'secondary' | 'warning' | 'success';
+    iconColor: 'secondary' | 'success';
     icon: LucideIcon;
   }
 > = {
@@ -28,9 +31,23 @@ export const STATE_META: Record<
   // exact same tokens the "In Beta" banner Card (cardVariant: 'orange') and
   // the dev-preview switcher's beta chip already use. 'warning' resolves to a
   // different token (--color-warning) and was the source of the color drift.
-  beta: { label: 'Beta', badgeVariant: 'orange', cardVariant: 'orange', iconColor: 'warning', icon: FlaskConical },
+  // iconColor is 'secondary' (not 'warning') because the amber warning icon
+  // measured 1.61:1 against this orange-tinted banner — well under the 3:1
+  // WCAG minimum for non-text contrast; text-secondary measures 5.30:1 here.
+  beta: { label: 'Beta', badgeVariant: 'orange', cardVariant: 'orange', iconColor: 'secondary', icon: FlaskConical },
   open: { label: 'Open', badgeVariant: 'success', cardVariant: 'green', iconColor: 'success', icon: Rocket },
 };
+
+// The Draft banner's supporting text measured 4.20:1 against its gray-tinted
+// card — just under the 4.5:1 text minimum (the gray tint is lighter than
+// the orange/green cards at the same opacity, which both clear 5.3:1+ with
+// the same text-secondary color). Scoped here rather than changing the
+// global token, which is used everywhere else and already passes.
+const draftBannerTextTheme = defineTheme({
+  name: 'draft-banner-text',
+  extends: stoneTheme,
+  tokens: { '--color-text-secondary': '#42525E' },
+});
 
 // Astryx's own Product Detail template uses this exact number+stars+count
 // shape for a course/product's public rating — no dropdown, since there's
@@ -43,8 +60,12 @@ function StarRating({ value, count, note }: { value: number; count: number; note
         <Star
           key={i}
           size={16}
-          fill={i < filled ? 'var(--color-warning)' : 'none'}
-          stroke={i < filled ? 'var(--color-warning)' : 'var(--color-border-emphasized)'}
+          // --color-warning (amber) measured 1.98:1 against the white page —
+          // under the 3:1 WCAG minimum for a graphical object like a filled
+          // star. --color-icon-orange clears 3.24:1 while staying in the
+          // same warm/gold family.
+          fill={i < filled ? 'var(--color-icon-orange)' : 'none'}
+          stroke={i < filled ? 'var(--color-icon-orange)' : 'var(--color-border-emphasized)'}
         />
       ))}
       <Text type="supporting">
@@ -107,7 +128,13 @@ export function CourseHeader({
               <Icon icon={stateMeta.icon} size="lg" color={stateMeta.iconColor} />
               <VStack gap={0.5}>
                 <Heading level={3}>{bannerHeading}</Heading>
-                <Text type="supporting">{bannerDescription}</Text>
+                {state === 'draft' ? (
+                  <Theme theme={draftBannerTextTheme}>
+                    <Text type="supporting">{bannerDescription}</Text>
+                  </Theme>
+                ) : (
+                  <Text type="supporting">{bannerDescription}</Text>
+                )}
               </VStack>
             </HStack>
             <HStack gap={2}>{actions}</HStack>
