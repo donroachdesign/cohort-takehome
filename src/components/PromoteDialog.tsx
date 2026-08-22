@@ -93,7 +93,7 @@ export function PromoteDialog({ course, price, onPriceChange, isOpen, onOpenChan
                   min={0}
                   step={1}
                   hasClear
-                  width={80}
+                  width={100}
                 />
               </HStack>
             </VStack>

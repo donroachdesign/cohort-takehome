@@ -254,7 +254,7 @@ export function DraftView({ course, switcher }: DraftViewProps) {
                         min={0}
                         step={1}
                         hasClear
-                        width={80}
+                        width={100}
                       />
                     </HStack>
                   </MetadataListItem>
