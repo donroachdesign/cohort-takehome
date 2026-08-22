@@ -1,6 +1,8 @@
 # Rationale
 
-I brought all three states to a comparable finish rather than picking one and roughing the others, since each earns its density differently: Open needs revenue and enrollment rigor because real money is visible; Draft is the instructor's daily workbench, so its curriculum editor and readiness checklist carry real editing surface area; Beta stayed the leanest by design — its job is just surfacing accumulating cohort data before the real decision point. What I cut: a course-creation flow. "Add course" is present but disabled — building it meant a second, brief-silent surface at the cost of depth on the page actually being scored.
+I gave Open the deepest polish — real money moves and an instructor's reputation is exposed there, so "calm, dense-but-legible" earns its keep most here. Draft and Beta are real, not rough shells: Draft is the instructor's daily workbench (curriculum editor, readiness checklist) and Beta reads as a scoreboard (cohort stats, roster, feedback) — leaving either half-built would undercut density-matches-state and state clarity on their own. What I cut: a course-creation flow. "Add course" exists but stays disabled — a second, brief-silent surface wasn't worth the depth it costs the page actually being scored.
+
+State clarity uses two layers: a Badge for the precise read, plus a full-width colored banner with a matching icon, so the state reads before you read anything.
 
 Three override moments:
 
@@ -8,6 +10,6 @@ Three override moments:
 
 2. My first pass badged every transaction row's status. Astryx's own guidance warns against this — "if all rows show green Active, none stand out." I cut it: "Paid" is plain text; only refunded rows get a status marker.
 
-3. Price was only ever settable inside the promote dialog — invisible for the rest of Beta. I lifted it into a persistent, editable panel on the Beta page itself, so it's a decision made in context, not sprung on the instructor at the last screen.
+3. Price was only settable inside the promote dialog, invisible the rest of Beta. I lifted it into a persistent, editable panel on the Beta page itself — a decision made in context, not sprung on the instructor at the last screen.
 
 Built with Astryx (Meta's design system) via Claude Code.
