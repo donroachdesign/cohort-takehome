@@ -1,15 +1,13 @@
 # Rationale
 
-I polished **Open** — the revenue/enrollment cockpit — over Draft or Beta. It's the state where real money moves and an instructor's reputation is exposed, so "calm, dense-but-legible, obsessive about hierarchy" earns its keep rather than just looking nice. Beta and Draft are structurally complete (same stat-row + table pattern, same lifecycle chrome) but plainer — text-only cells, no side panels.
-
-State clarity uses two layers: a Badge (Draft=neutral, Beta=warning, Open=success) for the precise read, plus a full-width colored banner with a matching icon for the peripheral, "don't have to read it" read the brief asks for.
+I brought all three states to a comparable finish rather than picking one and roughing the others, since each earns its density differently: Open needs revenue and enrollment rigor because real money is visible; Draft is the instructor's daily workbench, so its curriculum editor and readiness checklist carry real editing surface area; Beta stayed the leanest by design — its job is just surfacing accumulating cohort data before the real decision point. What I cut: a course-creation flow. "Add course" is present but disabled — building it meant a second, brief-silent surface at the cost of depth on the page actually being scored.
 
 Three override moments:
 
-1. Astryx's own Badge guidance warns against badging every row the same value — "if all rows show green Active, none stand out." My first pass badged every transaction's status. I cut it: "Paid" is plain text; only the 6 exceptional "Refunded" rows get a status dot via `useTableRowStatus`. The badge now means something.
+1. The obvious move for Beta to Open is a single "Are you sure?" AlertDialog. I overrode that — this is a growth action with asymmetric stakes (free beta seats keep access, curriculum stays locked, a public rating goes live), not a one-click destructive confirm. I built a real consequences list, a warning banner surfacing actual cohort data (1 of 35 beta students rated below 4 stars), and gated publishing on a real price plus two specific acknowledgments.
 
-2. The generic move for Beta→Open is a single AlertDialog — "Are you sure?" I overrode that. AlertDialog is built for one-click destructive confirms; this is a growth action with asymmetric stakes (42 free beta seats keep access, curriculum locks, a 4.6★ rating goes public). I built a custom Dialog instead: a consequences list, a warning banner surfacing the *actual* cohort data (3 of 42 rated below 4 stars), and three specific acknowledgment checkboxes gating the publish button.
+2. My first pass badged every transaction row's status. Astryx's own guidance warns against this — "if all rows show green Active, none stand out." I cut it: "Paid" is plain text; only refunded rows get a status marker.
 
-3. I drafted a "type $249 to confirm" pattern into that dialog, then cut it. Retyping a number doesn't correlate with comprehension — it's friction theater. Three specific checkboxes plus a data-backed warning already force actual reading.
+3. Price was only ever settable inside the promote dialog — invisible for the rest of Beta. I lifted it into a persistent, editable panel on the Beta page itself, so it's a decision made in context, not sprung on the instructor at the last screen.
 
-Built with Astryx (Meta's design system) via Claude Code — component-first, audited clean against Astryx's own compliance script.
+Built with Astryx (Meta's design system) via Claude Code.
