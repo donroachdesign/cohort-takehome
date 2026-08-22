@@ -36,7 +36,7 @@ const liveTheme = defineTheme({
 });
 
 export function CoursePage() {
-  const [pfbState, setPfbState] = useState<CourseState>('open');
+  const [pfbState, setPfbState] = useState<CourseState>('draft');
   const [isPromoteOpen, setIsPromoteOpen] = useState(false);
   const [betaPrice, setBetaPrice] = useState<number | null>(pfbBeta.price);
 

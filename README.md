@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. The page loads on **Open** (the polished state) — use the "Preview" segmented control in the top-right of the nav to flip between Draft / Beta / Open. From Beta, click **Promote to Open** to see the promotion dialog.
+Open http://localhost:3000. The page loads on **Draft** — use the "Preview" segmented control in the top-right of the nav to flip between Draft / Beta / Open. From Beta, click **Promote to Open** to see the promotion dialog.
 
 ## Structure
 
