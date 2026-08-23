@@ -66,7 +66,7 @@ export function BetaView({ course, price, onPriceChange, onPromote, switcher }: 
           bannerHeading="In Beta"
           bannerDescription={`Day ${course.daysElapsed} of a suggested ${course.suggestedDurationDays} · ${course.invitedCount} invited students, free access`}
           switcher={switcher}
-          actions={<Button label="Promote to Open" variant="primary" onClick={onPromote} />}
+          actions={<Button label="Promote to Open" variant="secondary" onClick={onPromote} />}
         />
       }
       start={

@@ -78,7 +78,7 @@ export function DraftView({ course, switcher }: DraftViewProps) {
           actions={
             <Button
               label="Invite beta cohort"
-              variant="primary"
+              variant="secondary"
               isDisabled={!readyForBeta}
               tooltip={!readyForBeta ? `Still needed: ${missing.join(', ')}` : undefined}
             />
