@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { PencilLine, FlaskConical, Rocket, Star, type LucideIcon } from 'lucide-react';
+import { PencilLine, FlaskConical, Rocket, Star, StarHalf, type LucideIcon } from 'lucide-react';
 import { defineTheme } from '@astryxdesign/core/theme';
 import { Theme } from '@astryxdesign/core';
 import { stoneTheme } from '@astryxdesign/theme-stone/built';
@@ -53,21 +53,48 @@ const draftBannerTextTheme = defineTheme({
 // shape for a course/product's public rating — no dropdown, since there's
 // no per-tier breakdown data to make one meaningful.
 function StarRating({ value, count, note }: { value: number; count: number; note?: string }) {
-  const filled = Math.round(value);
+  // Round to the nearest half star (4.8 -> 5, 4.5 -> 4 and a half, 4.3 -> 4 and
+  // a half is wrong by a hair but a quarter-star visual doesn't exist, so half
+  // is the finest resolution worth rendering).
+  const rounded = Math.round(value * 2) / 2;
+  const fullStars = Math.floor(rounded);
+  const hasHalfStar = rounded - fullStars === 0.5;
   return (
     <HStack gap={1} vAlign="center">
-      {Array.from({ length: 5 }, (_, i) => (
-        <Star
-          key={i}
-          size={16}
-          // --color-warning (amber) measured 1.98:1 against the white page —
-          // under the 3:1 WCAG minimum for a graphical object like a filled
-          // star. --color-icon-orange clears 3.24:1 while staying in the
-          // same warm/gold family.
-          fill={i < filled ? 'var(--color-icon-orange)' : 'none'}
-          stroke={i < filled ? 'var(--color-icon-orange)' : 'var(--color-border-emphasized)'}
-        />
-      ))}
+      {Array.from({ length: 5 }, (_, i) => {
+        if (i < fullStars) {
+          return (
+            <Star
+              key={i}
+              size={16}
+              // --color-warning (amber) measured 1.98:1 against the white page
+              // — under the 3:1 WCAG minimum for a graphical object like a
+              // filled star. --color-icon-orange clears 3.24:1 while staying
+              // in the same warm/gold family.
+              fill="var(--color-icon-orange)"
+              stroke="var(--color-icon-orange)"
+            />
+          );
+        }
+        if (i === fullStars && hasHalfStar) {
+          // StarHalf's path only traces the left half of the star outline —
+          // rendering it alone leaves the right half with no stroke at all.
+          // Layering it over a plain outlined Star gives the right half its
+          // outline back while the half-path supplies the left-side fill.
+          return (
+            <span key={i} className="relative inline-block h-4 w-4">
+              <Star size={16} fill="none" stroke="var(--color-border-emphasized)" className="absolute inset-0" />
+              <StarHalf
+                size={16}
+                fill="var(--color-icon-orange)"
+                stroke="var(--color-icon-orange)"
+                className="absolute inset-0"
+              />
+            </span>
+          );
+        }
+        return <Star key={i} size={16} fill="none" stroke="var(--color-border-emphasized)" />;
+      })}
       <Text type="supporting">
         {value} ({count}){note ? ` · ${note}` : ''}
       </Text>
